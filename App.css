@@ -1,0 +1,285 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background: url('wedd.JPG') no-repeat center center / cover;
+  margin: 0;
+  padding: 0;
+  color: white;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 0px);
+  background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  padding: 100px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem; /* Increased gap for more spacing */
+  width: 100%;
+  max-width: 450px; /* Increased max width for larger input fields */
+  padding: 30px; /* More padding for spacious look */
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.login-container h2 {
+  margin: 0 0 1rem 0;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 15px; /* Increased padding for bigger input boxes */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1.2rem; /* Larger font size */
+  margin-bottom: 1rem; /* Space below each input */
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Increased gap for buttons */
+  width: 100%;
+}
+
+.button-container button {
+  padding: 12px; /* Larger padding for buttons */
+  border: none;
+  background-color: #ff8fa3;
+  color: white;
+  font-size: 1.1rem; /* Slightly larger button text */
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-container button:hover {
+  background-color: #fc718f;
+}
+
+.nav-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  background-color: #fcbfdc;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nav-bar a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-bar a:hover {
+  background-color: #ff8fa3;
+}
+
+.logout-button {
+  background-color: #ff8fa3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #fc718f;
+}
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 90%; /* Ensures the container width is 90% of the parent */
+  max-width: 450px; /* Restricts the container width */
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  margin: 0 auto; /* Centers the form container horizontally */
+}
+
+.form-container input {
+  width: 90%; /* Make the input field occupy full width of the container */
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.guest-button {
+  font-size: 1.5rem; /* Increased font size */
+  padding: 15px; /* Larger padding for better visibility */
+  background-color: #ff8fa3; /* Same background color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.guest-button:hover {
+  background-color: #fc718f;
+}
+
+.guest-list {
+  font-size: 20px; /* Increase font size for entire guest list */
+  margin-bottom: 15px;
+}
+
+.guest-list-item {
+  margin: 10px 0;
+}
+
+.guest-name {
+  font-size: 24px; /* Larger font for name */
+  font-weight: bold;
+}
+
+.guest-list button {
+  font-size: 16px;
+  margin: 5px;
+  padding: 8px 15px; 
+}
+
+.guest-list p {
+  font-size: 10px;
+}
+
+/* Task Manager Container */
+.task-manager-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem; /* Increased gap for more spacing */
+  width: 90%;
+  max-width: 450px; /* Increased max width for larger input fields */
+  padding: 30px; /* More padding for spacious look */
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  margin: 0 auto; /* Ensures the container is horizontally centered */
+}
+
+.task-manager-container h2 {
+  margin: 0 0 1rem 0;
+}
+
+/* Input Styling */
+.task-manager-container input {
+  width: 100%;
+  padding: 15px; /* Larger padding for bigger input boxes */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1.2rem; /* Larger font size */
+  margin-bottom: 1rem; /* Space below each input */
+}
+
+/* Button Styling */
+.task-manager-container button {
+  padding: 12px; /* Larger padding for buttons */
+  border: none;
+  background-color: #ff8fa3;
+  color: white;
+  font-size: 1.1rem; /* Slightly larger button text */
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.task-manager-container button:hover {
+  background-color: #fc718f;
+}
+
+.task-manager-container button:hover {
+  background-color: #fc718f;
+}
+
+.task-list {
+  font-size: 20px; /* Increase font size for the task list */
+  margin-bottom: 15px;
+  list-style-type: none;
+  padding: 0;
+}
+
+.task-list-item {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  display: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-status-buttons {
+  display: center;
+  gap: 0.75rem; /* Space between buttons */
+}
+
+.task-status-buttons button {
+  font-size: 1rem;
+  padding: 8px 15px;
+  border-radius: 5px;
+  background-color: #fcbfdc;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.task-status-buttons button:hover {
+  background-color: #ff8fa3;
+}
+
+.task-status {
+  font-weight: bold;
+  color: #ff8fa3;
+}
+
+/* Center the entire budget container */
+.budget-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Horizontally center */
+  justify-content: center; /* Vertically center */
+
+}
+/* Center the table container */
+.categories-table-container {
+  width: 80%;
+  max-width: 600px;
+  margin-top: 20px;
+  overflow-x: auto; /* Allow scrolling if table is too wide */
+}
+
+.categories-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  text-align: left;
+}
