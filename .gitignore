@@ -8,4 +8,5 @@ docker-compose.override.yml
 *.sqlite3
 node_modules/
 !.docker/Dockerfile
-
+.DS_Store
+≈
