@@ -35,4 +35,6 @@ jobs:
       - name: Wait for Docker to be ready
         run: |
           until curl -s http://localhost:8080 > /dev/null; do
-            echo "Waiting for Docker container to
+            echo "Waiting for Docker container to start..."
+            sleep 5
+          done
