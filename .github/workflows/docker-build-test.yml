@@ -1,0 +1,41 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches:
+      - main
+      - feature/task_restructaration
+  pull_request:
+    branches:
+      - main
+      - feature/task_restructaration
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker build -t ssd-project-main-image .docker
+
+      - name: Run Docker container
+        run: docker run -d -p 8080:80 --name ssd-project-main-container ssd-project-main-image
+
+      - name: Wait for Docker to be ready
+        run: sleep 10  # You may need to increase this wait time if the application requires more time to start.
+
+      - name: Test Docker response
+        run: |
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080)
+          if [ "$STATUS" == "200" ]; then
+            echo "Test passed! Received HTTP 200."
+          else
+            echo "Test failed. Received HTTP status $STATUS."
+            exit 1  # Fail the action if status is not 200
+          fi
