@@ -1,26 +1,34 @@
 import React, { useState } from 'react';
-import { loginWithEmail, loginWithGoogle } from './AuthService';
+import { loginWithEmail, loginWithGoogle } from '../services/AuthService';
+
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
     try {
       await loginWithGoogle();
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage("Google Login failed. Please try again.");
-      console.error("Google Login Error:", error);
+      console.error("Google Login Error:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleEmailLogin = async () => {
+    setLoading(true);
     try {
       await loginWithEmail(email, password);
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage("Email Login failed. Please check your credentials.");
-      console.error("Email Login Error:", error);
+      console.error("Email Login Error:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,7 +38,9 @@ const Login: React.FC = () => {
 
       {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
 
-      <button onClick={handleGoogleLogin}>Login with Google</button>
+      <button onClick={handleGoogleLogin} disabled={loading}>
+        {loading ? 'Logging in...' : 'Login with Google'}
+      </button>
 
       <div>
         <input 
@@ -49,9 +59,9 @@ const Login: React.FC = () => {
         />
         <button 
           onClick={handleEmailLogin} 
-          disabled={!email || !password}  // Disable if email or password is empty
+          disabled={loading || !email || !password}
         >
-          Login
+          {loading ? 'Logging in...' : 'Login'}
         </button>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { firestore } from './firebase';
+import { firestore } from '../services/firebase';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 
 const TaskManager: React.FC = () => {
