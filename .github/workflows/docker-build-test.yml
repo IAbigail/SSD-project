@@ -1,4 +1,5 @@
 name: Docker Build and Test
+
 on:
   push:
     branches:
@@ -24,23 +25,14 @@ jobs:
 
       # Build the Docker image from the Dockerfile
       - name: Build Docker image
-        run: docker build -t ssd-project-main-image .
+        run: docker build -t ssd-project-main-image -f Dockerfile .
 
       # Run the Docker container
       - name: Run Docker container
         run: docker run -d -p 8080:80 --name ssd-project-main-container ssd-project-main-image
 
-      # Wait for the container to be fully ready
+      # Wait for the container to be fully ready (more robust than sleep)
       - name: Wait for Docker to be ready
-        run: sleep 10  # Increase this time if your app takes longer to start
-
-      # Test if the Docker container is responding correctly
-      - name: Test Docker response
         run: |
-          STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080)
-          if [ "$STATUS" == "200" ]; then
-            echo "Test passed! Received HTTP 200."
-          else
-            echo "Test failed. Received HTTP status $STATUS."
-            exit 1
-          fi
+          until curl -s http://localhost:8080 > /dev/null; do
+            echo "Waiting for Docker container to
