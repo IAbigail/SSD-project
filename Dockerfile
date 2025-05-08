@@ -7,21 +7,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Install Blackbox for secret management
-RUN apt-get update && \
-    apt-get install -y gnupg git blackbox && \
-    apt-get clean
-
-# Check blackbox installation
-RUN which blackbox || echo "Blackbox not found"
-RUN blackbox --version || echo "Blackbox version not available"
-
-# Initialize Blackbox (only if not initialized already)
-RUN blackbox_initialize || echo "Blackbox already initialized"
-
-# Decrypt secrets before building the app
-RUN blackbox_decrypt_all || echo "Failed to decrypt secrets"
-
 # Copy the entire project
 COPY . .
 
