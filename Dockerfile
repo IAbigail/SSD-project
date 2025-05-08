@@ -10,6 +10,17 @@ RUN npm install
 # Copy the entire project
 COPY . .
 
+# Step 1.5: Install Blackbox for secret management
+RUN apt-get update && \
+    apt-get install -y gnupg git blackbox && \
+    apt-get clean
+
+# Initialize Blackbox (only if not initialized already)
+RUN blackbox_initialize || echo "Blackbox already initialized"
+
+# Decrypt secrets before building the app
+RUN blackbox_decrypt_all
+
 # Build the application (output in the 'dist' folder)
 RUN npm run build
 
@@ -20,7 +31,6 @@ FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy custom Nginx configuration for SPA (Single Page Application)
-
 COPY /src/config/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 to access the app
