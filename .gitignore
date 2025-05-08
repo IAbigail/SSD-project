@@ -1,7 +1,6 @@
 __pycache__/
 *.pyc
 *.log
-.env
 .dockerignore
 docker-compose.override.yml
 *.sqlite3
@@ -12,3 +11,5 @@ node_modules/
 /.blackbox/pubring.gpg~
 /.blackbox/pubring.kbx~
 /.blackbox/secring.gpg
+.env
+/.env
