@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { firestore } from './firebase';
+import { firestore } from '../services/firebase';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import * as XLSX from 'xlsx';
-import './App.css';
+// Dacă `App.css` este în `src/style`:
+import "@/styles/App.css";
+
 
 const GuestList: React.FC = () => {
   const [guests, setGuests] = useState<any[]>([]);

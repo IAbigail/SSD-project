@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import './App.css';
+
+import './styles/App.css';  // Correct the path to reflect the new location
+//import './App.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import { loginWithGoogle, loginWithEmail, signUpWithEmail, logout } from './AuthService';
-import Home from './Home';
-import Tasks from './TaskManager';
-import GuestList from './GuestaList';
-import Budget from './Budget';
-import Vendors from './Vendors';
+import { loginWithGoogle, loginWithEmail, signUpWithEmail, logout } from './services/AuthService';
+import Home from './pages/Home';
+import Tasks from './components/TaskManager';
+import GuestList from './components/GuestaList';
+import Budget from './components/Budget';
+import Vendors from './components/Vendors';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);

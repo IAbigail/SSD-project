@@ -1,7 +1,8 @@
-version: '3.8'
+version: '3'
 services:
-  web:
-    build: .
+  app:
+    image: myapp
+    env_file:
+      - .env # This will automatically load the environment variables from the decrypted .env file
     ports:
-      - "8080:80"
-    container_name: vite_frontend
+      - "8080:8080"
