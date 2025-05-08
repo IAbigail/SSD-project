@@ -9,3 +9,6 @@ node_modules/
 !.docker/Dockerfile
 .DS_Store
 ≈
+/.blackbox/pubring.gpg~
+/.blackbox/pubring.kbx~
+/.blackbox/secring.gpg
