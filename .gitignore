@@ -13,3 +13,4 @@ node_modules/
 /.blackbox/secring.gpg
 .env
 /.env
+.env.gpg
