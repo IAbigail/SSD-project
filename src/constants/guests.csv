@@ -1,0 +1,5 @@
+name,category,seating,phone,rsvpStatus
+John Doe,VIP,Table 1,123-456-7890,attending
+Jane Smith,General,Table 2,234-567-8901,pending
+Alice Johnson,VIP,Table 1,345-678-9012,declined
+Bob Brown,VIP,Table 3,456-789-0123,attending

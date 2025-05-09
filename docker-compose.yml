@@ -1,0 +1,8 @@
+version: '3'
+services:
+  app:
+    image: myapp
+    env_file:
+      - .env # This will automatically load the environment variables from the decrypted .env file
+    ports:
+      - "8080:8080"

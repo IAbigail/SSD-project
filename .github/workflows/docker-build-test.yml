@@ -1,0 +1,40 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches:
+      - main
+      - feature/task_restructaration
+  pull_request:
+    branches:
+      - main
+      - feature/task_restructaration
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Docker Buildx for building multi-platform Docker images
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # Build the Docker image from the Dockerfile
+      - name: Build Docker image
+        run: docker build -t ssd-project-main-image -f Dockerfile .
+
+      # Run the Docker container
+      - name: Run Docker container
+        run: docker run -d -p 8080:80 --name ssd-project-main-container ssd-project-main-image
+
+      # Wait for the container to be fully ready (more robust than sleep)
+      - name: Wait for Docker to be ready
+        run: |
+          until curl -s http://localhost:8080 > /dev/null; do
+            echo "Waiting for Docker container to start..."
+            sleep 5
+          done
