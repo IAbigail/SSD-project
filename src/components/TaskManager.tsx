@@ -35,12 +35,18 @@ const TaskManager: React.FC = () => {
       };
 
       if (editTaskId) {
+        // Update existing task
         const taskDoc = doc(firestore, 'tasks', editTaskId);
         await updateDoc(taskDoc, taskData);
-        setEditTaskId(null);
+        setEditTaskId(null); // Clear edit mode after update
+
+        // Update the tasks state locally without re-fetching from Firestore
         setTasks(tasks.map(task => task.id === editTaskId ? { ...task, ...taskData } : task));
       } else {
+        // Add new task
         const newDoc = await addDoc(taskCollection, taskData);
+
+        // Add the new task to the local state
         setTasks([...tasks, { id: newDoc.id, ...taskData }]);
       }
 
@@ -89,7 +95,7 @@ const TaskManager: React.FC = () => {
         type="text"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        placeholder="Category (e.g. Invitations)"
+        placeholder={t("category")}
       />
       <input
         type="date"

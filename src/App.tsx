@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './styles/App.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'; // Firebase imports
-import { auth } from './services/firebase'; // Import auth from firebase.ts
+import { loginWithGoogle, loginWithEmail, signUpWithEmail, logout } from './services/AuthService'; // Firebase imports
+import './i18n'; // Import i18n configuration for translations
+import { useTranslation } from 'react-i18next'; // Import useTranslation hook from react-i18next
+
 import Home from './pages/Home';
 import Tasks from './components/TaskManager';
 import GuestList from './components/GuestaList';
 import Budget from './components/Budget';
 import Vendors from './components/Vendors';
-import './i18n'; // Import i18n configuration for translations
-import { useTranslation } from 'react-i18next'; // Import useTranslation hook from react-i18next
-import { loginWithGoogle, loginWithEmail, signUpWithEmail, logout } from './services/AuthService';
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();

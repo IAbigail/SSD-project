@@ -84,6 +84,7 @@ const MediaStorage: React.FC = () => {
         <button onClick={generateQrCode}>{t('generateQrCodeButton')}</button>
         {qrCodeData ? (
           <div style={{ marginTop: '20px' }}>
+            <QRCode value={qrCodeData} />
             <p>{t('shareQrCode')}</p>
           </div>
         ) : (

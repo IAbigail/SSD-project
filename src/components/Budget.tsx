@@ -51,6 +51,7 @@ const Budget = () => {
       <p>{t('used')}: ${totalUsed} | {t('remaining')}: ${remainingBudget}</p>
 
       <h2>{t('categories')}</h2>
+
       <div className="categories-table-container">
         <table className="categories-table">
           <thead>

@@ -79,7 +79,7 @@ const Vendors = () => {
             <ul>
                 {vendors.map((vendor, index) => (
                     <li key={index}>
-                        <strong>{vendor.name}</strong> - {t('vendorContact')}: {vendor.contact}
+                        <strong>{vendor.name}</strong> - {t('contact')}: {vendor.contact}
                         <br />
                         {vendor.contract && (
                             <a href={vendor.contract} target="_blank" rel="noopener noreferrer">
@@ -92,6 +92,7 @@ const Vendors = () => {
                                 {t('viewInvoice')}
                             </a>
                         )}
+                        <br />
                         <button onClick={() => handleDeleteVendor(index)}>{t('deleteVendor')}</button>
                     </li>
                 ))}

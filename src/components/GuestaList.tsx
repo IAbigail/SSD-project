@@ -4,7 +4,7 @@ import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase
 import * as XLSX from 'xlsx';
 import { useTranslation } from 'react-i18next';
 
-// If `App.css` is in `src/style`:
+// If `App.css` is in `src/styles`:
 import "@/styles/App.css";
 
 const GuestList: React.FC = () => {
