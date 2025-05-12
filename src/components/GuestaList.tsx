@@ -14,7 +14,7 @@ const GuestList: React.FC = () => {
   const [newGuest, setNewGuest] = useState("");
   const [category, setCategory] = useState("");
   const [seating, setSeating] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(""); // Added phone state
   const [rsvpStatus, setRsvpStatus] = useState("pending");
   const [file, setFile] = useState<any>(null);
 
@@ -31,19 +31,19 @@ const GuestList: React.FC = () => {
 
   // Add guest to Firestore
   const handleAddGuest = async () => {
-    if (newGuest.trim() && category && seating && phone.trim()) {
+    if (newGuest.trim() && category && seating && phone.trim()) { // Ensure phone is filled
       const guestCollection = collection(firestore, 'guests');
       await addDoc(guestCollection, { 
         name: newGuest, 
         category, 
         seating, 
-        phone, 
+        phone, // Store phone number
         rsvpStatus 
       });
       setNewGuest(""); 
       setCategory("");
       setSeating("");
-      setPhone("");
+      setPhone(""); // Reset phone input after adding
     }
   };
 
@@ -51,7 +51,7 @@ const GuestList: React.FC = () => {
   const handleDeleteGuest = async (id: string) => {
     const guestDoc = doc(firestore, 'guests', id);
     await deleteDoc(guestDoc);
-    setGuests(guests.filter(guest => guest.id !== id));
+    setGuests(guests.filter(guest => guest.id !== id)); 
   };
 
   // Update RSVP Status
@@ -76,13 +76,13 @@ const GuestList: React.FC = () => {
         
         // Process and add guests to Firestore
         data.forEach(async (row: any) => {
-          if (row.name && row.category && row.seating && row.phone) {
+          if (row.name && row.category && row.seating && row.phone) { // Ensure phone is present
             const guestCollection = collection(firestore, 'guests');
             await addDoc(guestCollection, { 
               name: row.name, 
               category: row.category, 
               seating: row.seating, 
-              phone: row.phone,
+              phone: row.phone, // Include phone number from file
               rsvpStatus: row.rsvpStatus || "pending" 
             });
           }
@@ -94,62 +94,61 @@ const GuestList: React.FC = () => {
 
   return (
     <div>
+      {/* File Upload */}
       <input 
         type="file" 
         accept=".csv, .xlsx" 
         onChange={handleFileUpload} 
-        />
+      />
+      
       <div className="form-container">
         <input
           type="text"
           value={newGuest}
           onChange={(e) => setNewGuest(e.target.value)}
-          placeholder={t('guestNamePlaceholder')}
+          placeholder="Enter guest name"
         />
         <input
           type="text"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          placeholder={t('categoryPlaceholder')}
+          placeholder="Enter guest category"
         />
         <input
           type="text"
           value={seating}
           onChange={(e) => setSeating(e.target.value)}
-          placeholder={t('seatingPlaceholder')}
+          placeholder="Enter seating arrangement"
         />
         <input
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder={t('phonePlaceholder')}
+          placeholder="Enter phone number" // Added phone input
         />
-        <button className="guest-button" onClick={handleAddGuest}>
-          {t('addGuestButton')}
-        </button>
+        <button className="guest-button" onClick={handleAddGuest}>Add Guest</button>
       </div>
 
+      {/* Guest List */}
       <ul className="guest-list">
         {guests.map((guest) => (
           <li key={guest.id} className="guest-list-item">
-            <p className="guest-name">{t('name')}: {guest.name}</p>
-            <p>{t('category')}: {guest.category}</p>
-            <p>{t('seating')}: {guest.seating}</p>
-            <p>{t('phone')}: {guest.phone}</p>
-            <p>{t('rsvpStatus')}: 
+            <p className="guest-name">Name: {guest.name}</p>
+            <p>Category: {guest.category}</p>
+            <p>Seating: {guest.seating}</p>
+            <p>Phone: {guest.phone}</p> {/* Display phone number */}
+            <p>RSVP Status: 
               <button onClick={() => handleRsvpStatusChange(guest.id, 'attending')}>
-                {t('attending')}
+                Attending
               </button>
               <button onClick={() => handleRsvpStatusChange(guest.id, 'declined')}>
-                {t('declined')}
+                Declined
               </button>
               <button onClick={() => handleRsvpStatusChange(guest.id, 'pending')}>
-                {t('pending')}
+                Pending
               </button>
             </p>
-            <button className="guest-button" onClick={() => handleDeleteGuest(guest.id)}>
-              {t('delete')}
-            </button>
+            <button className="guest-button" onClick={() => handleDeleteGuest(guest.id)}>Delete</button>
           </li>
         ))}
       </ul>

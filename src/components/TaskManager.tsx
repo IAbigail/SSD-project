@@ -9,6 +9,7 @@ const TaskManager: React.FC = () => {
   const [category, setCategory] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
+
   const { t } = useTranslation();
 
   // Fetch tasks from Firestore
@@ -43,6 +44,7 @@ const TaskManager: React.FC = () => {
         setTasks([...tasks, { id: newDoc.id, ...taskData }]);
       }
 
+      // Clear input fields
       setNewTask("");
       setCategory("");
       setDueDate("");
@@ -53,6 +55,8 @@ const TaskManager: React.FC = () => {
   const handleUpdateStatus = async (taskId: string, status: string) => {
     const taskDoc = doc(firestore, 'tasks', taskId);
     await updateDoc(taskDoc, { status });
+
+    // Update the status locally in state without re-fetching
     setTasks(tasks.map(task => task.id === taskId ? { ...task, status } : task));
   };
 
@@ -60,6 +64,8 @@ const TaskManager: React.FC = () => {
   const handleDeleteTask = async (taskId: string) => {
     const taskDoc = doc(firestore, 'tasks', taskId);
     await deleteDoc(taskDoc);
+
+    // Remove the task from state locally without re-fetching
     setTasks(tasks.filter(task => task.id !== taskId));
   };
 
@@ -68,7 +74,7 @@ const TaskManager: React.FC = () => {
     setNewTask(task.name);
     setCategory(task.category);
     setDueDate(task.dueDate);
-    setEditTaskId(task.id);
+    setEditTaskId(task.id); // Set edit mode
   };
 
   return (
@@ -83,7 +89,7 @@ const TaskManager: React.FC = () => {
         type="text"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        placeholder={t("categoryPlaceholder")}
+        placeholder="Category (e.g. Invitations)"
       />
       <input
         type="date"
@@ -93,14 +99,14 @@ const TaskManager: React.FC = () => {
       <button onClick={handleSaveTask}>
         {editTaskId ? t("updateTask") : t("addTask")}
       </button>
-      
+
       <ul className="task-list">
         {tasks.map((task) => (
           <li key={task.id} className="task-list-item">
             <span>{task.name}</span>
             <span className="task-category">{task.category}</span>
             <span className="task-due-date">{task.dueDate}</span>
-            <span className="task-status">{t(task.status)}</span>
+            <span className="task-status">{task.status}</span>
             <div className="task-status-buttons">
               <button onClick={() => handleUpdateStatus(task.id, 'In Progress')}>
                 {t("inProgress")}

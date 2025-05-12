@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import QRCode from 'qrcode.react'; // Ensure you have this package installed
+import { useTranslation } from 'react-i18next'; // Import i18n hook
 
 const MediaStorage: React.FC = () => {
   const { t } = useTranslation(); // Initialize i18next translation

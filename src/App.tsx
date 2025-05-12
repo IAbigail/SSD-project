@@ -10,6 +10,7 @@ import Budget from './components/Budget';
 import Vendors from './components/Vendors';
 import './i18n'; // Import i18n configuration for translations
 import { useTranslation } from 'react-i18next'; // Import useTranslation hook from react-i18next
+import { loginWithGoogle, loginWithEmail, signUpWithEmail, logout } from './services/AuthService';
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -31,31 +32,36 @@ const App: React.FC = () => {
 
   // Google login handler
   const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      setUser(user); // Store user data
+      const result = await loginWithGoogle();
+      setUser(result.user);
     } catch (error) {
       console.error('Google login failed', error);
     }
   };
 
-  // Email login handler (if required)
   const handleEmailLogin = async () => {
-    // Your email login logic here (e.g., Firebase signInWithEmailAndPassword)
+    try {
+      const result = await loginWithEmail(email, password);
+      setUser(result.user);
+    } catch (error) {
+      console.error('Email login failed', error);
+    }
   };
 
-  // Sign up handler
   const handleSignUp = async () => {
-    // Your sign-up logic here
+    try {
+      const result = await signUpWithEmail(email, password);
+      setUser(result.user);
+    } catch (error) {
+      console.error('Signup failed', error);
+    }
   };
 
-  // Logout handler
   const handleLogout = async () => {
     try {
-      await auth.signOut();
-      setUser(null); // Clear user data after logout
+      await logout();
+      setUser(null);
     } catch (error) {
       console.error('Logout failed', error);
     }
