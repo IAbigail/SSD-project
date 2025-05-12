@@ -10,4 +10,11 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['i18next-browser-languagedetector'], // Mark i18next browser language detector as external
+    },
+    outDir: 'build',  // Optional: Customize the output directory (defaults to 'dist')
+    sourcemap: true,  // Optional: Generate source maps for debugging
+  },
 });
