@@ -57,6 +57,15 @@
   "generateQrCodeTitle": "Générer un code QR pour les téléchargements des invités",
   "generateQrCodeButton": "Générer le code QR",
   "shareQrCode": "Partagez ce code QR avec vos invités pour qu'ils téléchargent leurs photos!",
-  "noQrCodeData": "Aucune donnée de code QR disponible. Cliquez sur le bouton ci-dessus pour en générer un."
+  "noQrCodeData": "Aucune donnée de code QR disponible. Cliquez sur le bouton ci-dessus pour en générer un.",
+    "login": "Se connecter",
+    "signUp": "S'inscrire",
+    "enterEmail": "Entrez votre email",
+    "enterPassword": "Entrez votre mot de passe",
+    "createAccount": "Créer un compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "guestUpload": "Téléchargement des invités"
+  
+  
 
 }

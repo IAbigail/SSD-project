@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { loginWithEmail, loginWithGoogle } from '../services/AuthService';
+// Login.tsx
 
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import the navigate hook
+import { loginWithEmail, loginWithGoogle, signUpWithEmail } from '../services/AuthService'; 
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -20,10 +23,12 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleEmailLogin = async () => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     try {
       await loginWithEmail(email, password);
+      setErrorMessage('');
     } catch (error: any) {
       setErrorMessage("Email Login failed. Please check your credentials.");
       console.error("Email Login Error:", error.message);
@@ -32,9 +37,27 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleEmailSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await signUpWithEmail(email, password);
+      setErrorMessage('');
+    } catch (error: any) {
+      setErrorMessage("Email Sign Up failed. Please try again.");
+      console.error("Email Sign Up Error:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const navigateToSignUp = () => {
+    navigate('/signup');  // This will navigate to the SignUp page
+  };
+
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Login or Sign Up</h2>
 
       {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
 
@@ -42,28 +65,33 @@ const Login: React.FC = () => {
         {loading ? 'Logging in...' : 'Login with Google'}
       </button>
 
-      <div>
-        <input 
-          type="email" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          placeholder="Email"
-          required 
-        />
-        <input 
-          type="password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          placeholder="Password"
-          required
-        />
-        <button 
-          onClick={handleEmailLogin} 
-          disabled={loading || !email || !password}
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </div>
+      <form onSubmit={handleEmailLogin}>
+        <div>
+          <input 
+            type="email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            placeholder="Email"
+            required 
+          />
+        </div>
+        <div>
+          <input 
+            type="password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            placeholder="Password"
+            required
+          />
+        </div>
+        <div>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </div>
+      </form>
+
+      <button onClick={navigateToSignUp}>Sign Up with Email</button> {/* Button to go to SignUp page */}
     </div>
   );
 };

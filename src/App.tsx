@@ -1,92 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import './styles/App.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import { loginWithGoogle, loginWithEmail, signUpWithEmail, logout } from './services/AuthService'; // Firebase imports
-import './i18n'; // Import i18n configuration for translations
-import { useTranslation } from 'react-i18next'; // Import useTranslation hook from react-i18next
+import { loginWithGoogle, loginWithEmail, signUpWithEmail, logout } from './services/AuthService';
+import './i18n';
+import { useTranslation } from 'react-i18next';
 
 import Home from './pages/Home';
 import Tasks from './components/TaskManager';
 import GuestList from './components/GuestaList';
 import Budget from './components/Budget';
 import Vendors from './components/Vendors';
+import GuestUpload from './components/GuestUpload'; 
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [user, setUser] = useState<any>(null);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [isSignUp, setIsSignUp] = useState<boolean>(false);
 
-  // Detect browser language
   useEffect(() => {
     const browserLanguage = navigator.language.split('-')[0];
     const supportedLanguages = ['en', 'fr', 'ro'];
-
-    if (supportedLanguages.includes(browserLanguage)) {
-      i18n.changeLanguage(browserLanguage);
-    } else {
-      i18n.changeLanguage('en'); // Default to English if not supported
-    }
+    i18n.changeLanguage(supportedLanguages.includes(browserLanguage) ? browserLanguage : 'en');
   }, [i18n]);
 
-  // Google login handler
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await loginWithGoogle();
-      setUser(result.user);
-    } catch (error) {
-      console.error('Google login failed', error);
-    }
-  };
+  useEffect(() => {
+    checkFirebaseUserSession().then(setUser);
+  }, []);
 
-  const handleEmailLogin = async () => {
+  const handleAuth = async () => {
     try {
+      if (isSignUp) {
+        await signUpWithEmail(email, password);
+      }
       const result = await loginWithEmail(email, password);
       setUser(result.user);
     } catch (error) {
-      console.error('Email login failed', error);
-    }
-  };
-
-  const handleSignUp = async () => {
-    try {
-      const result = await signUpWithEmail(email, password);
-      setUser(result.user);
-    } catch (error) {
-      console.error('Signup failed', error);
+      console.error(isSignUp ? 'Signup failed' : 'Login failed', error);
     }
   };
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      setUser(null);
-    } catch (error) {
-      console.error('Logout failed', error);
-    }
+    await logout();
+    setUser(null);
   };
 
   return (
     <Router>
       {!user ? (
         <div className="login-container">
-          <h2>{t('welcome')}</h2>
-          <input
-            type="email"
-            placeholder={t('enterEmail')}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder={t('enterPassword')}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <h2>{t(isSignUp ? 'signUp' : 'login')}</h2>
+          <input type="email" placeholder={t('enterEmail')} value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="password" placeholder={t('enterPassword')} value={password} onChange={(e) => setPassword(e.target.value)} />
           <div className="button-container">
-            <button onClick={handleEmailLogin}>{t('loginWithEmail')}</button>
-            <button onClick={handleSignUp}>{t('signUpWithEmail')}</button>
-            <button onClick={handleGoogleLogin}>{t('loginWithGoogle')}</button>
+            <button onClick={handleAuth}>{t(isSignUp ? 'signUp' : 'login')}</button>
+            <button onClick={() => setIsSignUp(!isSignUp)}>{t(isSignUp ? 'alreadyHaveAccount' : 'createAccount')}</button>
+            <button onClick={loginWithGoogle}>{t('loginWithGoogle')}</button>
           </div>
         </div>
       ) : (
@@ -106,6 +76,7 @@ const App: React.FC = () => {
               <Route path="/guests" element={<GuestList />} />
               <Route path="/budget" element={<Budget />} />
               <Route path="/vendors" element={<Vendors />} />
+              <Route path="/guestupload" element={<GuestUpload />} />
             </Routes>
           </div>
         </div>
@@ -113,5 +84,7 @@ const App: React.FC = () => {
     </Router>
   );
 };
+
+const checkFirebaseUserSession = async () => null;
 
 export default App;

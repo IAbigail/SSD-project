@@ -46,8 +46,8 @@
   "name": "Name",
   "seating": "Seating",
   "phone": "Phone",
-  "addTask": "Adaugă sarcină",
-  "updateTask": "Actualizează sarcină",
+  "addTask": "Add Task",
+  "updateTask": "Update Task",
   "welcomeToOurWedding": "Welcome to Our Wedding!",
   "uploadWeddingMedia": "Upload your wedding photos and videos, and allow guests to upload their moments too!",
   "uploadMediaSectionTitle": "Upload Wedding Media",
@@ -57,6 +57,14 @@
   "generateQrCodeTitle": "Generate QR Code for Guest Uploads",
   "generateQrCodeButton": "Generate QR Code",
   "shareQrCode": "Share this QR code with your guests to upload their photos!",
-  "noQrCodeData": "No QR code data available. Click the button above to generate one."
+  "noQrCodeData": "No QR code data available. Click the button above to generate one.",
+    "login": "Login",
+    "signUp": "Sign Up",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Enter your password",
+    "createAccount": "Create an account",
+    "alreadyHaveAccount": "Already have an account?",
+    "guestUpload": "Guest Upload"
+
 
 }

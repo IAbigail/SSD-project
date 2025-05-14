@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import QRCode from 'qrcode.react'; // Ensure you have this package installed
+import * as QRCode from 'qrcode';
 import { useTranslation } from 'react-i18next'; // Import i18n hook
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const MediaStorage: React.FC = () => {
   const { t } = useTranslation(); // Initialize i18next translation
+  const navigate = useNavigate(); // Use useNavigate hook to redirect
 
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [guestPhoto, setGuestPhoto] = useState<File | null>(null);
   const [qrCodeData, setQrCodeData] = useState<string>(''); // Placeholder for QR code data
+  const [qrCodeImage, setQrCodeImage] = useState<string>(''); // Placeholder for generated QR code image
 
   // Function to handle media file upload (wedding-related media)
   const handleMediaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,11 +29,27 @@ const MediaStorage: React.FC = () => {
   };
 
   // Generate QR code with a unique URL for guests to upload their photos
-  const generateQrCode = () => {
-    // Generate a unique URL or token for each event or guest
-    const uniqueUrl = `https://wedding-photos.com/upload/${Date.now()}`;
-    setQrCodeData(uniqueUrl);
-  };
+ // Generate QR code with a unique URL for guests to upload their photos
+const generateQrCode = async () => {
+  // Generate a unique token for each guest, but do not append it to the URL
+  const uniqueToken = `guest-${Date.now()}`;
+
+  // Get the base URL dynamically based on the current environment
+  const baseUrl = 'http://localhost:5173/guestupload'; // This is the base URL, without '/upload/{uniqueToken}'
+  
+  // Construct the URL without '/upload/{uniqueToken}' at the end
+  const uniqueUrl = `${baseUrl}`;  // This will now just be 'http://localhost:5173/guestupload'
+  
+  console.log("Generated QR Code Data:", uniqueUrl); // Log the URL for debugging
+
+  try {
+    const qrImage = await QRCode.toDataURL(uniqueUrl); // Generate QR code as base64 image
+    setQrCodeImage(qrImage); // Set the generated image as qrCodeImage
+  } catch (err) {
+    console.error('Error generating QR code', err);
+  }
+};
+
 
   return (
     <div style={styles.container}>
@@ -72,7 +91,7 @@ const MediaStorage: React.FC = () => {
             <img
               src={URL.createObjectURL(guestPhoto)}
               alt={t('guestPhotoAltText')}
-              style={{ width: '200px', height: 'auto', marginTop: '10px' }}
+              style={{ width: '100px', height: 'auto', marginTop: '10px' }}
             />
           </div>
         )}
@@ -82,9 +101,10 @@ const MediaStorage: React.FC = () => {
       <div>
         <h2>{t('generateQrCodeTitle')}</h2>
         <button onClick={generateQrCode}>{t('generateQrCodeButton')}</button>
-        {qrCodeData ? (
+        {qrCodeImage ? (
           <div style={{ marginTop: '20px' }}>
             <p>{t('shareQrCode')}</p>
+            <img src={qrCodeImage} alt="QR Code" style={{ width: '100px' }} />
           </div>
         ) : (
           <p>{t('noQrCodeData')}</p>

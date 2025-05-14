@@ -1,16 +1,31 @@
-// src/authService.ts
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-import { auth } from "./firebase"; // Import the already initialized auth
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification, signInWithPopup, GoogleAuthProvider, signOut, updateEmail } from "firebase/auth";
+import { auth } from "../services/firebase"; 
+import { FirebaseError } from "firebase/app";
 
 const googleProvider = new GoogleAuthProvider();
 
 // Email/Password authentication
 export const signUpWithEmail = async (email: string, password: string) => {
   try {
-    return await createUserWithEmailAndPassword(auth, email, password);
-  } catch (error) {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    
+    // Send verification email
+    await sendEmailVerification(userCredential.user);
+    
+    return userCredential;
+  } catch (error: any) {
     console.error("Error signing up:", error);
-    throw error; // Re-throw to handle it in the UI
+    if (error instanceof FirebaseError) {
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          throw new Error('The email is already in use. Please try another one.');
+        case 'auth/weak-password':
+          throw new Error('The password is too weak. Please choose a stronger one.');
+        default:
+          throw new Error(error.message || 'An error occurred during sign-up.');
+      }
+    }
+    throw error;
   }
 };
 
@@ -45,10 +60,24 @@ export const loginWithGoogle = async () => {
 // Logout function
 export const logout = async () => {
   try {
-    await signOut(auth); // Sign out user
+    await signOut(auth);
     console.log('User logged out successfully');
   } catch (error: any) {
     console.error("Error logging out:", error.message);
-    throw new Error(error.message); // Re-throw to handle it in the UI
+    throw new Error(error.message);
+  }
+};
+
+// Change email
+export const changeEmail = async (newEmail: string) => {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      await updateEmail(user, newEmail);
+      console.log("Email updated successfully.");
+    }
+  } catch (error: any) {
+    console.error("Error changing email:", error);
+    throw new Error(error.message || "An error occurred while changing email.");
   }
 };

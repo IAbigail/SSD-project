@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { firestore } from '../services/firebase';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import * as XLSX from 'xlsx';
 import { useTranslation } from 'react-i18next';
 
 // If `App.css` is in `src/styles`:
@@ -63,32 +62,38 @@ const GuestList: React.FC = () => {
     ));
   };
 
-  // Handle file upload and parsing CSV/Excel
+  // Handle file upload and parsing CSV
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && file.type === "text/csv") {
       const reader = new FileReader();
       reader.onload = async (event) => {
-        const binaryStr = event.target?.result;
-        const wb = XLSX.read(binaryStr, { type: 'binary' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws);
-        
-        // Process and add guests to Firestore
-        data.forEach(async (row: any) => {
-          if (row.name && row.category && row.seating && row.phone) { // Ensure phone is present
-            const guestCollection = collection(firestore, 'guests');
-            await addDoc(guestCollection, { 
-              name: row.name, 
-              category: row.category, 
-              seating: row.seating, 
-              phone: row.phone, // Include phone number from file
-              rsvpStatus: row.rsvpStatus || "pending" 
-            });
+        const csvContent = event.target?.result as string;
+
+        // Split CSV into rows and parse the data
+        const rows = csvContent.split("\n");
+
+        // Process each row (ignoring the header row)
+        rows.slice(1).forEach(async (row) => {
+          const columns = row.split(",");
+          if (columns.length >= 4) { // Ensure there's enough data
+            const [name, category, seating, phone, rsvpStatus] = columns;
+            if (name && category && seating && phone) { // Ensure phone is present
+              const guestCollection = collection(firestore, 'guests');
+              await addDoc(guestCollection, { 
+                name: name.trim(), 
+                category: category.trim(), 
+                seating: seating.trim(), 
+                phone: phone.trim(), // Include phone number from file
+                rsvpStatus: rsvpStatus.trim() || "pending" // Default to "pending" if no status
+              });
+            }
           }
         });
       };
-      reader.readAsBinaryString(file);
+      reader.readAsText(file); // Read file as text
+    } else {
+      alert("Please upload a valid CSV file.");
     }
   };
 
@@ -97,7 +102,7 @@ const GuestList: React.FC = () => {
       {/* File Upload */}
       <input 
         type="file" 
-        accept=".csv, .xlsx" 
+        accept=".csv" 
         onChange={handleFileUpload} 
       />
       

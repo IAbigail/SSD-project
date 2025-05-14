@@ -58,6 +58,16 @@
   "generateQrCodeTitle": "Generați cod QR pentru încărcările invitaților",
   "generateQrCodeButton": "Generați cod QR",
   "shareQrCode": "Distribuiți acest cod QR invitaților pentru a încărca fotografiile lor!",
-  "noQrCodeData": "Nicio dată pentru cod QR disponibilă. Faceți clic pe butonul de mai sus pentru a genera unul."
+  "noQrCodeData": "Nicio dată pentru cod QR disponibilă. Faceți clic pe butonul de mai sus pentru a genera unul.",
+  
+    "login": "Autentificare",
+    "signUp": "Înregistrare",
+    "enterEmail": "Introduceti email-ul",
+    "enterPassword": "Introduceti parola",
+    "createAccount": "Creează un cont",
+    "alreadyHaveAccount": "Ai deja un cont?",
+    "guestUpload": "Încărcare oaspeți"
+  
+  
 
 }
