@@ -6,15 +6,14 @@ import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth"
 
 // Your Firebase configuration (Replace with your actual Firebase project config)
 const firebaseConfig = {
-  apiKey: "AIzaSyB52WbOA8wUIVfBAmWByV-JCykDh2aqgag",
-  authDomain: "wedding-planner71.firebaseapp.com",
-  projectId: "wedding-planner71",
-  storageBucket: "wedding-planner71.appspot.com", // Corrected Storage Bucket URL
-  messagingSenderId: "701453380291",
-  appId: "1:701453380291:web:30775f25cbfef1efdc1076",
-  measurementId: "G-CVBB5CR8EJ"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
