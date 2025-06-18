@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { firestore } from '../services/firebase';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { useTranslation } from 'react-i18next';
 
 const TaskManager: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -8,6 +9,8 @@ const TaskManager: React.FC = () => {
   const [category, setCategory] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
+
+  const { t } = useTranslation();
 
   // Fetch tasks from Firestore
   useEffect(() => {
@@ -86,20 +89,23 @@ const TaskManager: React.FC = () => {
         type="text"
         value={newTask}
         onChange={(e) => setNewTask(e.target.value)}
-        placeholder="Enter new task"
+        placeholder={t("enterNewTask")}
       />
       <input
         type="text"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        placeholder="Category (e.g. Invitations)"
+        placeholder={t("category")}
       />
       <input
         type="date"
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
       />
-      <button onClick={handleSaveTask}>{editTaskId ? 'Update Task' : 'Add Task'}</button>
+      <button onClick={handleSaveTask}>
+        {editTaskId ? t("updateTask") : t("addTask")}
+      </button>
+
       <ul className="task-list">
         {tasks.map((task) => (
           <li key={task.id} className="task-list-item">
@@ -108,11 +114,15 @@ const TaskManager: React.FC = () => {
             <span className="task-due-date">{task.dueDate}</span>
             <span className="task-status">{task.status}</span>
             <div className="task-status-buttons">
-              <button onClick={() => handleUpdateStatus(task.id, 'In Progress')}>In Progress</button>
-              <button onClick={() => handleUpdateStatus(task.id, 'Completed')}>Completed</button>
+              <button onClick={() => handleUpdateStatus(task.id, 'In Progress')}>
+                {t("inProgress")}
+              </button>
+              <button onClick={() => handleUpdateStatus(task.id, 'Completed')}>
+                {t("completed")}
+              </button>
             </div>
-            <button onClick={() => handleEditTask(task)}>Edit</button>
-            <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
+            <button onClick={() => handleEditTask(task)}>{t("edit")}</button>
+            <button onClick={() => handleDeleteTask(task.id)}>{t("delete")}</button>
           </li>
         ))}
       </ul>

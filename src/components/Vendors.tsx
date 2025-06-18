@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Vendors = () => {
+    const { t } = useTranslation();
+
     const [vendors, setVendors] = useState([
         { name: 'Vendor 1', contact: 'vendor1@example.com', contract: '', invoice: '' },
         { name: 'Vendor 2', contact: 'vendor2@example.com', contract: '', invoice: '' },
@@ -15,7 +18,7 @@ const Vendors = () => {
 
     const handleAddVendor = () => {
         if (!newVendor.name || !newVendor.contact) {
-            alert("Please fill in all vendor details");
+            alert(t("pleaseFillAllDetails"));
             return;
         }
 
@@ -41,21 +44,21 @@ const Vendors = () => {
 
     return (
         <div>
-            <h1>Vendors</h1>
+            <h1>{t('vendors')}</h1>
 
             <div>
-                <h2>Add New Vendor</h2>
+                <h2>{t('addNewVendor')}</h2>
                 <input
                     type="text"
                     name="name"
-                    placeholder="Vendor Name"
+                    placeholder={t('vendorName')}
                     value={newVendor.name}
                     onChange={handleTextChange}
                 />
                 <input
                     type="email"
                     name="contact"
-                    placeholder="Vendor Contact"
+                    placeholder={t('vendorContact')}
                     value={newVendor.contact}
                     onChange={handleTextChange}
                 />
@@ -69,27 +72,28 @@ const Vendors = () => {
                     name="invoice"
                     onChange={handleFileChange}
                 />
-                <button onClick={handleAddVendor}>Add Vendor</button>
+                <button onClick={handleAddVendor}>{t('addVendor')}</button>
             </div>
 
-            <h2>Vendor List</h2>
+            <h2>{t('vendorList')}</h2>
             <ul>
                 {vendors.map((vendor, index) => (
                     <li key={index}>
-                        <strong>{vendor.name}</strong> - Contact: {vendor.contact}
+                        <strong>{vendor.name}</strong> - {t('contact')}: {vendor.contact}
                         <br />
                         {vendor.contract && (
                             <a href={vendor.contract} target="_blank" rel="noopener noreferrer">
-                                View Contract
+                                {t('viewContract')}
                             </a>
                         )}
                         <br />
                         {vendor.invoice && (
                             <a href={vendor.invoice} target="_blank" rel="noopener noreferrer">
-                                View Invoice
+                                {t('viewInvoice')}
                             </a>
                         )}
-                        <button onClick={() => handleDeleteVendor(index)}>Delete</button>
+                        <br />
+                        <button onClick={() => handleDeleteVendor(index)}>{t('deleteVendor')}</button>
                     </li>
                 ))}
             </ul>

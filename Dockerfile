@@ -20,7 +20,9 @@ FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy custom Nginx configuration for SPA (Single Page Application)
-COPY /src/config/nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY /config/nginx.conf /etc/nginx/conf.d/default.conf
+
 
 # Expose port 80 to access the app
 EXPOSE 80

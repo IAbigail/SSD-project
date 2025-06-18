@@ -1,22 +1,26 @@
 // firebase.ts
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; // Import Firestore
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage"; // Import Firebase Storage
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 // Your Firebase configuration (Replace with your actual Firebase project config)
 const firebaseConfig = {
-  apiKey: "AIzaSyB52WbOA8wUIVfBAmWByV-JCykDh2aqgag",
-  authDomain: "wedding-planner71.firebaseapp.com",
-  projectId: "wedding-planner71",
-  storageBucket: "wedding-planner71.firebasestorage.app",
-  messagingSenderId: "701453380291",
-  appId: "1:701453380291:web:30775f25cbfef1efdc1076",
-  measurementId: "G-CVBB5CR8EJ"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore and Auth
+
+// Initialize Firebase Services
 export const firestore = getFirestore(app); // Initialize Firestore
+export const storage = getStorage(app); // Initialize Storage
 export const auth = getAuth(app); // Initialize Auth
+
+setPersistence(auth, browserLocalPersistence);

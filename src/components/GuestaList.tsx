@@ -1,19 +1,32 @@
 import React, { useState, useEffect } from 'react';
+import Papa from 'papaparse';
 import { firestore } from '../services/firebase';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import * as XLSX from 'xlsx';
-// Dacă `App.css` este în `src/style`:
+import { useTranslation } from 'react-i18next';
+
 import "@/styles/App.css";
 
+const allowedStatuses = ["attending", "declined", "pending"];
+
+const isCsvFile = (file: File) => {
+  return (
+    file.type === "text/csv" ||
+    file.type === "application/vnd.ms-excel" ||  // some browsers use this for CSV
+    file.name.toLowerCase().endsWith(".csv")
+  );
+};
+
+const isValidPhone = (phone: string) => /^[\d\s+\-()]+$/.test(phone);
 
 const GuestList: React.FC = () => {
+  const { t } = useTranslation();
+
   const [guests, setGuests] = useState<any[]>([]);
   const [newGuest, setNewGuest] = useState("");
   const [category, setCategory] = useState("");
   const [seating, setSeating] = useState("");
-  const [phone, setPhone] = useState(""); // Added phone state
+  const [phone, setPhone] = useState("");
   const [rsvpStatus, setRsvpStatus] = useState("pending");
-  const [file, setFile] = useState<any>(null);
 
   // Fetch guests from Firestore
   useEffect(() => {
@@ -28,19 +41,29 @@ const GuestList: React.FC = () => {
 
   // Add guest to Firestore
   const handleAddGuest = async () => {
-    if (newGuest.trim() && category && seating && phone.trim()) { // Ensure phone is filled
+    if (newGuest.trim() && category && seating && phone.trim()) {
+      if (!isValidPhone(phone.trim())) {
+        alert("Please enter a valid phone number.");
+        return;
+      }
       const guestCollection = collection(firestore, 'guests');
-      await addDoc(guestCollection, { 
-        name: newGuest, 
-        category, 
-        seating, 
-        phone, // Store phone number
-        rsvpStatus 
+      await addDoc(guestCollection, {
+        name: newGuest.trim(),
+        category: category.trim(),
+        seating: seating.trim(),
+        phone: phone.trim(),
+        rsvpStatus
       });
-      setNewGuest(""); 
+      setNewGuest("");
       setCategory("");
       setSeating("");
-      setPhone(""); // Reset phone input after adding
+      setPhone("");
+      // Optionally refresh list here or optimistically update state
+      const guestSnapshot = await getDocs(guestCollection);
+      const guestList = guestSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setGuests(guestList);
+    } else {
+      alert("Please fill in all fields.");
     }
   };
 
@@ -48,58 +71,128 @@ const GuestList: React.FC = () => {
   const handleDeleteGuest = async (id: string) => {
     const guestDoc = doc(firestore, 'guests', id);
     await deleteDoc(guestDoc);
-    setGuests(guests.filter(guest => guest.id !== id)); 
+    setGuests(guests.filter(guest => guest.id !== id));
   };
 
   // Update RSVP Status
   const handleRsvpStatusChange = async (id: string, status: string) => {
+    if (!allowedStatuses.includes(status)) {
+      alert("Invalid RSVP status.");
+      return;
+    }
     const guestDoc = doc(firestore, 'guests', id);
     await updateDoc(guestDoc, { rsvpStatus: status });
-    setGuests(guests.map(guest => 
+    setGuests(guests.map(guest =>
       guest.id === id ? { ...guest, rsvpStatus: status } : guest
     ));
   };
 
-  // Handle file upload and parsing CSV/Excel
+  // Detect delimiter by analyzing the text content
+  const detectDelimiter = (text: string) => {
+    const delimiters = [",", ";", "\t"];
+    let bestDelimiter = ",";
+    let maxCount = 0;
+
+    delimiters.forEach(delim => {
+      const lines = text.split("\n").filter(l => l.trim() !== "");
+      const counts = lines.map(line => line.split(delim).length);
+      const avgCount = counts.reduce((a, b) => a + b, 0) / counts.length;
+
+      if (avgCount > maxCount) {
+        maxCount = avgCount;
+        bestDelimiter = delim;
+      }
+    });
+
+    return bestDelimiter;
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && isCsvFile(file)) {
       const reader = new FileReader();
-      reader.onload = async (event) => {
-        const binaryStr = event.target?.result;
-        const wb = XLSX.read(binaryStr, { type: 'binary' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws);
-        
-        // Process and add guests to Firestore
-        data.forEach(async (row: any) => {
-          if (row.name && row.category && row.seating && row.phone) { // Ensure phone is present
+
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        const delimiter = detectDelimiter(text);
+
+        Papa.parse(file, {
+          header: true,
+          skipEmptyLines: true,
+          delimiter,
+          complete: async (results) => {
+            const data = results.data as any[];
+            const headerColumns = results.meta.fields?.map(h => h.trim().toLowerCase()) || [];
+
+            const expectedCols = ["name", "category", "seating", "phone", "rsvpstatus"];
+            const hasAllCols = expectedCols.every(col => headerColumns.includes(col));
+            if (!hasAllCols) {
+              alert(`CSV header must include columns: ${expectedCols.join(", ")}`);
+              return;
+            }
+
             const guestCollection = collection(firestore, 'guests');
-            await addDoc(guestCollection, { 
-              name: row.name, 
-              category: row.category, 
-              seating: row.seating, 
-              phone: row.phone, // Include phone number from file
-              rsvpStatus: row.rsvpStatus || "pending" 
-            });
+            const errors: string[] = [];
+
+            for (const [index, row] of data.entries()) {
+              const guest = Object.fromEntries(
+                Object.entries(row).map(([k, v]) => [k.trim().toLowerCase(), (v as string).trim()])
+              );
+
+              const { name, category, seating, phone, rsvpstatus } = guest;
+
+              if (!name || !category || !seating || !phone) {
+                errors.push(`Row ${index + 2}: Missing required field.`);
+                continue;
+              }
+
+              if (!isValidPhone(phone)) {
+                errors.push(`Row ${index + 2}: Invalid phone number "${phone}".`);
+                continue;
+              }
+
+              let status = (rsvpstatus || "").toLowerCase();
+              if (!allowedStatuses.includes(status)) status = "pending";
+
+              await addDoc(guestCollection, {
+                name,
+                category,
+                seating,
+                phone,
+                rsvpStatus: status,
+              });
+            }
+
+            if (errors.length > 0) {
+              alert("Import completed with some errors:\n" + errors.join("\n"));
+            }
+
+            // Refresh guest list after import
+            const guestSnapshot = await getDocs(guestCollection);
+            const guestList = guestSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setGuests(guestList);
+          },
+          error: (error) => {
+            alert("Error parsing CSV file: " + error.message);
           }
         });
       };
-      reader.readAsBinaryString(file);
+
+      reader.readAsText(file);
+    } else {
+      alert("Please upload a valid CSV file.");
     }
   };
 
   return (
     <div>
-     
-
       {/* File Upload */}
-      <input 
-        type="file" 
-        accept=".csv, .xlsx" 
-        onChange={handleFileUpload} 
+      <input
+        type="file"
+        accept=".csv"
+        onChange={handleFileUpload}
       />
-      
+
       <div className="form-container">
         <input
           type="text"
@@ -123,7 +216,7 @@ const GuestList: React.FC = () => {
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="Enter phone number" // Added phone input
+          placeholder="Enter phone number"
         />
         <button className="guest-button" onClick={handleAddGuest}>Add Guest</button>
       </div>
@@ -135,8 +228,8 @@ const GuestList: React.FC = () => {
             <p className="guest-name">Name: {guest.name}</p>
             <p>Category: {guest.category}</p>
             <p>Seating: {guest.seating}</p>
-            <p>Phone: {guest.phone}</p> {/* Display phone number */}
-            <p>RSVP Status: 
+            <p>Phone: {guest.phone}</p>
+            <p>RSVP Status:
               <button onClick={() => handleRsvpStatusChange(guest.id, 'attending')}>
                 Attending
               </button>

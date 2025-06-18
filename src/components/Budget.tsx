@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Budget = () => {
+  const { t } = useTranslation();
+
   const [totalBudget, setTotalBudget] = useState(10000); // Initial total wedding budget
   const [categories, setCategories] = useState([
     { name: 'Catering', plannedAmount: 2000, actualAmount: 0 },
@@ -31,11 +34,11 @@ const Budget = () => {
 
   return (
     <div className="budget-container">
-      <h1>Budget Overview</h1>
+      <h1>{t('budgetOverview')}</h1>
 
       {/* Input field for the total budget */}
       <div>
-        <label htmlFor="total-budget">Total Budget: </label>
+        <label htmlFor="total-budget">{t('totalBudget')}: </label>
         <input
           type="number"
           id="total-budget"
@@ -45,17 +48,18 @@ const Budget = () => {
         />
       </div>
 
-      <p>Used: ${totalUsed} | Remaining: ${remainingBudget}</p>
+      <p>{t('used')}: ${totalUsed} | {t('remaining')}: ${remainingBudget}</p>
 
-      <h2>Categories</h2>
+      <h2>{t('categories')}</h2>
+
       <div className="categories-table-container">
         <table className="categories-table">
           <thead>
             <tr>
-              <th>Category</th>
-              <th>Planned</th>
-              <th>Actual</th>
-              <th>Remaining</th>
+              <th>{t('category')}</th>
+              <th>{t('planned')}</th>
+              <th>{t('actual')}</th>
+              <th>{t('remainingAmount')}</th>
             </tr>
           </thead>
           <tbody>
